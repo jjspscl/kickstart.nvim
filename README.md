@@ -1,6 +1,96 @@
-# kickstart.nvim
+# kickstart.nvim (personal fork)
 
-## Introduction
+Personal Neovim configuration forked from [nvim-lua/kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim).
+
+## What's Different From Upstream
+
+| Change | Details |
+| :----- | :------ |
+| **Colorscheme** | Uses `koehler` instead of `tokyonight` (tokyonight installed & configured transparent) |
+| **Transparent background** | Autocommand clears `Normal`, `NormalNC`, `NonText`, `NormalFloat` on every ColorScheme |
+| **Relative line numbers** | `vim.opt.relativenumber = true` |
+| **Arrow keys disabled** | Shows "Use h/j/k/l to move!!" messages |
+| **WSL clipboard** | `clip.exe` / `powershell.exe` integration for copy/paste |
+| **Netrw disabled** | Built-in file explorer disabled in favor of nvim-tree |
+| **Telescope ignore** | `node_modules/` and `.git/` filtered from file search |
+| **TypeScript LSP** | `ts_ls` added to Mason-managed servers |
+| **Indent guides** | `indent-blankline.nvim` enabled |
+| **nvim-tree.lua** | File explorer sidebar (`<leader>e` to toggle) |
+| **tmux.nvim** | Tmux copy sync integration |
+| **copilot.lua** | GitHub Copilot inline suggestions (`<C-CR>` to accept) |
+
+## Plugins
+
+| Plugin | Purpose |
+| :----- | :------ |
+| [lazy.nvim](https://github.com/folke/lazy.nvim) | Plugin manager |
+| [vim-sleuth](https://github.com/tpope/vim-sleuth) | Auto-detect tabstop & shiftwidth |
+| [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | Git signs in the gutter |
+| [which-key.nvim](https://github.com/folke/which-key.nvim) | Show pending keybinds |
+| [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Fuzzy finder (files, LSP, grep, etc.) |
+| [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | LSP configuration |
+| [mason.nvim](https://github.com/williamboman/mason.nvim) | Auto-install LSP servers & tools |
+| [fidget.nvim](https://github.com/j-hui/fidget.nvim) | LSP status notifications |
+| [lazydev.nvim](https://github.com/folke/lazydev.nvim) | Neovim Lua API completion & annotations |
+| [conform.nvim](https://github.com/stevearc/conform.nvim) | Autoformat on save (`<leader>f` to format) |
+| [blink.cmp](https://github.com/saghen/blink.cmp) | Autocompletion (replaced nvim-cmp) |
+| [LuaSnip](https://github.com/L3MON4D3/LuaSnip) | Snippet engine |
+| [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) | Colorscheme (installed, `koehler` active) |
+| [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) | Highlight TODO/NOTE/etc. in comments |
+| [mini.nvim](https://github.com/echasnovski/mini.nvim) | Textobjects (ai), surround, statusline |
+| [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting & code understanding |
+| [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) | Indentation guides |
+| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | File explorer sidebar |
+| [tmux.nvim](https://github.com/aserowy/tmux.nvim) | Tmux integration & copy sync |
+| [copilot.lua](https://github.com/zbirenbaum/copilot.lua) | GitHub Copilot AI suggestions |
+
+### Optional Plugins (commented out in `init.lua`)
+
+- `kickstart.plugins.debug` — DAP debugging (Go via delve, extensible)
+- `kickstart.plugins.lint` — Linting via `nvim-lint`
+- `kickstart.plugins.autopairs` — Auto-close brackets with `nvim-autopairs`
+- `kickstart.plugins.neo-tree` — Neo-tree file explorer
+- `kickstart.plugins.gitsigns` — Extended gitsigns keymaps (stage, reset, blame, diff)
+
+## Key Mappings
+
+| Mapping | Mode | Description |
+| :------ | :--- | :---------- |
+| `<Space>` | — | Leader key |
+| `<leader>sh` | n | Search help |
+| `<leader>sk` | n | Search keymaps |
+| `<leader>sf` | n | Search files |
+| `<leader>sg` | n | Search by grep |
+| `<leader>sd` | n | Search diagnostics |
+| `<leader>sr` | n | Search resume |
+| `<leader>s.` | n | Search recent files |
+| `<leader>sn` | n | Search Neovim config files |
+| `<leader><leader>` | n | Find existing buffers |
+| `<leader>/` | n | Fuzzy search in current buffer |
+| `<leader>f` | — | Format buffer (conform) |
+| `<leader>e` | n | Toggle file tree (nvim-tree) |
+| `grd` | n | LSP: Go to definition |
+| `grr` | n | LSP: Go to references |
+| `gri` | n | LSP: Go to implementation |
+| `grD` | n | LSP: Go to declaration |
+| `grt` | n | LSP: Type definition |
+| `gO` | n | LSP: Document symbols |
+| `gW` | n | LSP: Workspace symbols |
+| `grn` | n | LSP: Rename symbol |
+| `gra` | n, x | LSP: Code action |
+| `K` | n | Hover documentation |
+| `<leader>th` | n | Toggle inlay hints |
+| `<leader>q` | n | Open diagnostic quickfix |
+| `<C-h/j/k/l>` | n | Move focus between splits |
+| `<C-CR>` | i | Accept Copilot suggestion |
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a full history of changes.
+
+---
+
+## About Kickstart.nvim
 
 A starting point for Neovim that is:
 
@@ -50,25 +140,7 @@ Neovim's configurations are located under the following paths, depending on your
 | Windows (cmd)| `%localappdata%\nvim\` |
 | Windows (powershell)| `$env:LOCALAPPDATA\nvim\` |
 
-#### Recommended Step
-
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) this repo
-so that you have your own copy that you can modify, then install by cloning the
-fork to your machine using one of the commands below, depending on your OS.
-
-> [!NOTE]
-> Your fork's URL will be something like this:
-> `https://github.com/<your_github_username>/kickstart.nvim.git`
-
-You likely want to remove `lazy-lock.json` from your fork's `.gitignore` file
-too - it's ignored in the kickstart repo to make maintenance easier, but it's
-[recommended to track it in version control](https://lazy.folke.io/usage/lockfile).
-
-#### Clone kickstart.nvim
-
-> [!NOTE]
-> If following the recommended step above (i.e., forking the repo), replace
-> `nvim-lua` with `<your_github_username>` in the commands below
+#### Clone
 
 <details><summary> Linux and Mac </summary>
 
@@ -83,13 +155,13 @@ git clone https://github.com/jjspscl/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOM
 If you're using `cmd.exe`:
 
 ```
-git clone https://github.com/nvim-lua/kickstart.nvim.git "%localappdata%\nvim"
+git clone https://github.com/jjspscl/kickstart.nvim.git "%localappdata%\nvim"
 ```
 
 If you're using `powershell.exe`
 
 ```
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${env:LOCALAPPDATA}\nvim"
+git clone https://github.com/jjspscl/kickstart.nvim.git "${env:LOCALAPPDATA}\nvim"
 ```
 
 </details>
