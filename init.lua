@@ -209,10 +209,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+-- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+-- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+-- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+-- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -483,6 +483,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- VS Code style: Ctrl-p to find files
+      vim.keymap.set('n', '<C-p>', builtin.find_files, { desc = 'Find files (VS Code style)' })
     end,
   },
 
@@ -695,19 +698,28 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
-        --
+        -- TypeScript / JavaScript
+        tsserver = {},
+        eslint = {},
 
+        -- Python
+        basedpyright = {},
+        ruff = {},
+
+        -- Go
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+              analyses = {
+                unusedparams = true,
+              },
+              staticcheck = true,
+            },
+          },
+        },
+
+        -- Lua
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -737,14 +749,20 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      -- mason-tool-installer handles non-LSP tools (formatters, linters, etc.)
+      -- LSP servers are installed via mason-lspconfig below, which knows how to
+      -- map lspconfig names (e.g. tsserver) to Mason package names.
+      require('mason-tool-installer').setup {
+        ensure_installed = {
+          'stylua', -- Lua formatter
+          'prettierd', -- JS/TS/JSON formatter (fast daemon)
+          'gofumpt', -- Go formatter (strict gofmt)
+          'goimports', -- Go imports organizer
+        },
+      }
 
       require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+        ensure_installed = vim.tbl_keys(servers or {}),
         automatic_installation = false,
         handlers = {
           function(server_name)
@@ -792,11 +810,15 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        -- Python: ruff handles formatting via LSP; conform as fallback
+        python = { 'ruff_format' },
+        -- Go: goimports handles imports + formatting, gofumpt for strict style
+        go = { 'goimports', 'gofumpt' },
       },
     },
   },
@@ -949,6 +971,12 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      -- Toggle comments with gc (normal) and gc (visual)
+      require('mini.comment').setup()
+
+      -- Auto-pairs for brackets, quotes, etc.
+      require('mini.pairs').setup()
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -974,7 +1002,14 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash', 'c', 'diff', 'html', 'css', 'json',
+        'lua', 'luadoc', 'vim', 'vimdoc', 'query',
+        'javascript', 'typescript', 'tsx',
+        'python',
+        'go', 'gomod', 'gosum', 'gowork',
+        'markdown', 'markdown_inline',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1007,42 +1042,8 @@ require('lazy').setup({
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
-  --
-  -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-  -- Or use telescope!
-  -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-  -- you can continue same window with `<space>sr` which resumes last telescope search
-  {
-    'nvim-tree/nvim-tree.lua',
-    lazy = true,
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    keys = {
-      { '<leader>e', '<cmd>NvimTreeToggle<CR>', desc = 'Toggle file tree' },
-    },
-    config = function()
-      require('nvim-tree').setup {
-        view = {
-          width = 30,
-          side = 'left',
-        },
-        filters = {
-          dotfiles = false,
-        },
-        git = {
-          enable = true,
-          ignore = false,
-        },
-      }
-    end,
-  },
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   {
     'aserowy/tmux.nvim',
     config = function()

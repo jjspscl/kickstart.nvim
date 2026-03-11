@@ -6,13 +6,25 @@ All notable changes to this Neovim configuration (forked from [kickstart.nvim](h
 
 ## Personal Customizations (jjspscl/kickstart.nvim)
 
+### 2026-03-11 — Multi-language LSP, Neo-tree & VS Code keymaps
+- **Multi-language LSP** — Added `tsserver`, `eslint`, `basedpyright`, `ruff`, and `gopls` (with `gofumpt`, `staticcheck`, `unusedparams`) to Mason-managed servers
+- **Mason refactor** — Separated LSP server installs (`mason-lspconfig`) from tool installs (`mason-tool-installer`); tools list now includes `stylua`, `prettierd`, `gofumpt`, `goimports`
+- **Formatters (conform.nvim)** — Configured `prettierd`/`prettier` for JS/TS/JSON, `ruff_format` for Python, `goimports` + `gofumpt` for Go
+- **Neo-tree replaces nvim-tree** — Enabled `kickstart.plugins.neo-tree`; added `<C-b>` VS Code-style sidebar toggle; show dotfiles and gitignored files
+- **mini.comment** — Enabled `mini.comment` for `gc` toggle-comment support
+- **mini.pairs** — Enabled `mini.pairs` for auto-closing brackets and quotes
+- **Telescope `<C-p>`** — Added VS Code-style `<C-p>` keymap for `find_files`
+- **Gitsigns extended keymaps** — Enabled `kickstart.plugins.gitsigns` (stage, reset, blame, diff)
+- **Treesitter expanded** — Added `css`, `json`, `javascript`, `typescript`, `tsx`, `python`, `go`, `gomod`, `gosum`, `gowork` grammars
+- **Arrow keys allowed** — Commented out arrow-key disable hints (arrow keys work normally now)
+- **nvim-tree removed** — Replaced by Neo-tree
+
 ### 2025-04-28 — `➕ MORE CONFIGS`
 - **Transparent background** — Added autocommand group `TransparentBackground` that clears `Normal`, `NormalNC`, `NonText`, and `NormalFloat` backgrounds on every `ColorScheme` event
 - **True color** — Enabled `vim.opt.termguicolors`
 - **Relative line numbers** — Enabled `vim.opt.relativenumber`
 - **WSL clipboard** — Added `vim.g.clipboard` configuration using `clip.exe` / `powershell.exe` for WSL copy/paste
 - **Disabled netrw** — Set `vim.g.loaded_netrw` and `vim.g.loaded_netrwPlugin` to disable the built-in file explorer
-- **Arrow keys enabled** — Uncommented arrow-key disabling hints (arrow keys now show "Use h/j/k/l to move!!" messages)
 - **Colorscheme** — Changed active colorscheme from `tokyonight` to `koehler`
 - **Tokyonight configured transparent** — Set `transparent = true` and disabled italic comments in tokyonight setup
 - **Telescope file ignore** — Added `file_ignore_patterns` for `node_modules/` and `.git/`

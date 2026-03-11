@@ -12,9 +12,15 @@ return {
   cmd = 'Neotree',
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '<C-b>', ':Neotree toggle<CR>', desc = 'Toggle NeoTree (VS Code style)', silent = true },
   },
   opts = {
     filesystem = {
+      filtered_items = {
+        visible = true, -- show hidden files dimmed
+        hide_dotfiles = false,
+        hide_gitignored = false,
+      },
       window = {
         mappings = {
           ['\\'] = 'close_window',

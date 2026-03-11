@@ -9,13 +9,18 @@ Personal Neovim configuration forked from [nvim-lua/kickstart.nvim](https://gith
 | **Colorscheme** | Uses `koehler` instead of `tokyonight` (tokyonight installed & configured transparent) |
 | **Transparent background** | Autocommand clears `Normal`, `NormalNC`, `NonText`, `NormalFloat` on every ColorScheme |
 | **Relative line numbers** | `vim.opt.relativenumber = true` |
-| **Arrow keys disabled** | Shows "Use h/j/k/l to move!!" messages |
 | **WSL clipboard** | `clip.exe` / `powershell.exe` integration for copy/paste |
-| **Netrw disabled** | Built-in file explorer disabled in favor of nvim-tree |
+| **Netrw disabled** | Built-in file explorer disabled in favor of Neo-tree |
 | **Telescope ignore** | `node_modules/` and `.git/` filtered from file search |
-| **TypeScript LSP** | `ts_ls` added to Mason-managed servers |
+| **Multi-language LSP** | `tsserver`, `eslint`, `basedpyright`, `ruff`, `gopls` with settings |
+| **Formatters** | `prettierd` for JS/TS/JSON, `ruff_format` for Python, `goimports` + `gofumpt` for Go |
+| **Neo-tree** | File explorer sidebar (`<C-b>` / `\` to toggle, shows dotfiles & gitignored) |
+| **mini.comment** | Toggle comments with `gc` (normal & visual) |
+| **mini.pairs** | Auto-close brackets, quotes, etc. |
+| **Gitsigns extended** | Stage, reset, blame, diff keymaps enabled |
+| **Treesitter expanded** | Added CSS, JSON, JS, TS, TSX, Python, Go grammars |
+| **VS Code keymaps** | `<C-p>` find files, `<C-b>` toggle sidebar |
 | **Indent guides** | `indent-blankline.nvim` enabled |
-| **nvim-tree.lua** | File explorer sidebar (`<leader>e` to toggle) |
 | **tmux.nvim** | Tmux copy sync integration |
 | **copilot.lua** | GitHub Copilot inline suggestions (`<C-CR>` to accept) |
 
@@ -37,10 +42,10 @@ Personal Neovim configuration forked from [nvim-lua/kickstart.nvim](https://gith
 | [LuaSnip](https://github.com/L3MON4D3/LuaSnip) | Snippet engine |
 | [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) | Colorscheme (installed, `koehler` active) |
 | [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) | Highlight TODO/NOTE/etc. in comments |
-| [mini.nvim](https://github.com/echasnovski/mini.nvim) | Textobjects (ai), surround, statusline |
+| [mini.nvim](https://github.com/echasnovski/mini.nvim) | Textobjects (ai), surround, comment, pairs, statusline |
 | [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting & code understanding |
 | [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) | Indentation guides |
-| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | File explorer sidebar |
+| [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) | File explorer sidebar |
 | [tmux.nvim](https://github.com/aserowy/tmux.nvim) | Tmux integration & copy sync |
 | [copilot.lua](https://github.com/zbirenbaum/copilot.lua) | GitHub Copilot AI suggestions |
 
@@ -49,8 +54,8 @@ Personal Neovim configuration forked from [nvim-lua/kickstart.nvim](https://gith
 - `kickstart.plugins.debug` — DAP debugging (Go via delve, extensible)
 - `kickstart.plugins.lint` — Linting via `nvim-lint`
 - `kickstart.plugins.autopairs` — Auto-close brackets with `nvim-autopairs`
-- `kickstart.plugins.neo-tree` — Neo-tree file explorer
-- `kickstart.plugins.gitsigns` — Extended gitsigns keymaps (stage, reset, blame, diff)
+
+> **Note:** `kickstart.plugins.neo-tree` and `kickstart.plugins.gitsigns` are now **enabled** by default.
 
 ## Key Mappings
 
@@ -68,7 +73,9 @@ Personal Neovim configuration forked from [nvim-lua/kickstart.nvim](https://gith
 | `<leader><leader>` | n | Find existing buffers |
 | `<leader>/` | n | Fuzzy search in current buffer |
 | `<leader>f` | — | Format buffer (conform) |
-| `<leader>e` | n | Toggle file tree (nvim-tree) |
+| `<C-p>` | n | Find files (VS Code style) |
+| `<C-b>` | n | Toggle Neo-tree sidebar (VS Code style) |
+| `\` | n | Reveal file in Neo-tree |
 | `grd` | n | LSP: Go to definition |
 | `grr` | n | LSP: Go to references |
 | `gri` | n | LSP: Go to implementation |
